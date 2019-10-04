@@ -172,14 +172,14 @@ public final class NxtNxcVisitor extends AbstractCppVisitor implements INxtVisit
                 this.sb.append("GOLDEN_RATIO");
                 break;
             case SQRT2:
-                this.sb.append("SQRT2");
+                this.sb.append("sqrt(2)");
                 break;
             case SQRT1_2:
-                this.sb.append("SQRT1_2");
+                this.sb.append("sqrt(0.5)");
                 break;
             // IEEE 754 floating point representation
             case INFINITY:
-                this.sb.append("INFINITY");
+                this.sb.append("INFINITY"); // TODO
                 break;
             default:
                 break;
@@ -884,18 +884,17 @@ public final class NxtNxcVisitor extends AbstractCppVisitor implements INxtVisit
 
     @Override
     public Void visitLengthOfIsEmptyFunct(LengthOfIsEmptyFunct<Void> lengthOfIsEmptyFunct) {
-        String methodName = "ArrayLen(";
         if ( lengthOfIsEmptyFunct.getFunctName() == FunctionNames.LIST_IS_EMPTY ) {
-            methodName = "ArrIsEmpty(";
+            String methodName = "ArrayLen(";
+            this.sb.append(methodName);
+            lengthOfIsEmptyFunct.getParam().get(0).accept(this);
+            this.sb.append(") == 0");
+        } else {
+            String methodName = "ArrayLen(";
+            this.sb.append(methodName);
+            lengthOfIsEmptyFunct.getParam().get(0).accept(this);
+            this.sb.append(")");
         }
-        this.sb.append(methodName);
-        /*if ( !lengthOfIsEmptyFunct.getParam().get(0).getVarType().toString().contains("ARRAY") ) {
-            this.tmpArrCount += 1;
-            this.sb.append("__tmpArr" + this.tmpArrCount);
-        } else {*/
-        lengthOfIsEmptyFunct.getParam().get(0).accept(this);
-        //}
-        this.sb.append(")");
         return null;
     }
 
@@ -1032,9 +1031,9 @@ public final class NxtNxcVisitor extends AbstractCppVisitor implements INxtVisit
             // % in nxc % doesn't leave a a fractional residual, e.g. 5.2%1 = 0, so it is not possible to check the wholeness by "%1", that is why
             //an additional function is used
             case WHOLE:
-                this.sb.append("MathIsWhole(");
+                this.sb.append("(frac(");
                 mathNumPropFunct.getParam().get(0).accept(this);
-                this.sb.append(")");
+                this.sb.append(")) == 0");
                 break;
             case POSITIVE:
                 this.sb.append("(");
@@ -1064,22 +1063,22 @@ public final class NxtNxcVisitor extends AbstractCppVisitor implements INxtVisit
     public Void visitMathOnListFunct(MathOnListFunct<Void> mathOnListFunct) {
         switch ( mathOnListFunct.getFunctName() ) {
             case SUM:
-                this.sb.append("ArrSum(");
+                this.sb.append("ArraySum(");
                 break;
             case MIN:
-                this.sb.append("ArrMin(");
+                this.sb.append("ArrayMin(");
                 break;
             case MAX:
-                this.sb.append("ArrMax(");
+                this.sb.append("ArrayMax(");
                 break;
             case AVERAGE:
-                this.sb.append("ArrMean(");
+                this.sb.append("ArrayMean(");
                 break;
             case MEDIAN:
                 this.sb.append("ArrMedian(");
                 break;
             case STD_DEV:
-                this.sb.append("ArrStandardDeviatioin(");
+                this.sb.append("ArrayStd(");
                 break;
             case RANDOM:
                 this.sb.append("ArrRand(");
@@ -1094,7 +1093,7 @@ public final class NxtNxcVisitor extends AbstractCppVisitor implements INxtVisit
 
     @Override
     public Void visitMathRandomFloatFunct(MathRandomFloatFunct<Void> mathRandomFloatFunct) {
-        this.sb.append("RandomFloat()");
+        this.sb.append("Random(100) / 100");
         return null;
     }
 
@@ -1117,50 +1116,45 @@ public final class NxtNxcVisitor extends AbstractCppVisitor implements INxtVisit
             case ABS:
                 this.sb.append("abs(");
                 break;
-            //Taylor Series converge only when value is less than one. Larger values are calculated
-            //using a table.
             case LN:
-                this.sb.append("MathLn(");
+                this.sb.append("log(");
                 break;
             case LOG10:
-                this.sb.append("MathLog(");
+                this.sb.append("log10(");
                 break;
             case EXP:
-                this.sb.append("MathPow(E, ");
+                this.sb.append("exp(");
                 break;
             case POW10:
-                this.sb.append("MathPow(10, ");
+                this.sb.append("pow(10, ");
                 break;
-            //the 3 functions below accept degrees
+            // d for degree
             case SIN:
-                this.sb.append("MathSin(");
+                this.sb.append("sind(");
                 break;
             case COS:
-                this.sb.append("MathCos(");
+                this.sb.append("cosd(");
                 break;
             case TAN:
-                this.sb.append("MathTan(");
+                this.sb.append("tand(");
                 break;
             case ASIN:
-                this.sb.append("MathAsin(");
+                this.sb.append("asind(");
                 break;
-            //Taylor Series converge only when value is less than one. Larger values are calculated
-            //using a table.
             case ATAN:
-                this.sb.append("MathAtan(");
+                this.sb.append("atand(");
                 break;
             case ACOS:
-                this.sb.append("MathAcos(");
+                this.sb.append("acosd(");
                 break;
             case ROUND:
-                this.sb.append("MathRound(");
+                this.sb.append("floor(0.5 + ");
                 break;
             case ROUNDUP:
-                this.sb.append("MathRoundUp(");
+                this.sb.append("ceil(");
                 break;
-            //check why there are double brackets
             case ROUNDDOWN:
-                this.sb.append("MathFloor(");
+                this.sb.append("floor(");
                 break;
             default:
                 break;
@@ -1173,7 +1167,7 @@ public final class NxtNxcVisitor extends AbstractCppVisitor implements INxtVisit
 
     @Override
     public Void visitMathPowerFunct(MathPowerFunct<Void> mathPowerFunct) {
-        this.sb.append("MathPow(");
+        this.sb.append("pow(");
         super.visitMathPowerFunct(mathPowerFunct);
         return null;
     }
