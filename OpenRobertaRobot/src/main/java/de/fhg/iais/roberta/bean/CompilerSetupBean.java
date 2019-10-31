@@ -4,7 +4,7 @@ package de.fhg.iais.roberta.bean;
  * Container for all compiler setup related information, to execute the runBuild, usually.
  * Paths necessary for the compilers and specific compiler options are stored here.
  */
-public class CompilerSetupBean {
+public class CompilerSetupBean implements OraBean {
 
     private String compilerBinDir;
     private String compilerResourcesDir;

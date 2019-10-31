@@ -20,7 +20,7 @@ import de.fhg.iais.roberta.syntax.lang.methods.Method;
  * Currently used for more than just used hardware, should be split up into multiple separate beans in the future.
  */
 //TODO move unrelated data to specific beans. Refactor fields from Mbed into usedActors/Sensors
-public class UsedHardwareBean {
+public class UsedHardwareBean implements OraBean {
 
     private List<String> globalVariables = new ArrayList<>();
     private List<String> declaredVariables = new ArrayList<>();

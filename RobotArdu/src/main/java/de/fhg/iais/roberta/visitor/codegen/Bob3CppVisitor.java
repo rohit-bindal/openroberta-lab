@@ -1,8 +1,10 @@
 package de.fhg.iais.roberta.visitor.codegen;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean;
+import de.fhg.iais.roberta.bean.OraBean;
 import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.components.ConfigurationAst;
 import de.fhg.iais.roberta.syntax.Phrase;
@@ -43,8 +45,8 @@ public final class Bob3CppVisitor extends AbstractCommonArduinoCppVisitor implem
      *
      * @param phrases to generate the code from
      */
-    public Bob3CppVisitor(UsedHardwareBean usedHardwareBean, CodeGeneratorSetupBean codeGeneratorSetupBean, ArrayList<ArrayList<Phrase<Void>>> phrases) {
-        super(usedHardwareBean, codeGeneratorSetupBean, new ConfigurationAst.Builder().build(), phrases);
+    public Bob3CppVisitor(List<ArrayList<Phrase<Void>>> phrases, OraBean... beans) {
+        super(phrases, new ConfigurationAst.Builder().build(), beans);
     }
 
     @Override
@@ -126,7 +128,7 @@ public final class Bob3CppVisitor extends AbstractCommonArduinoCppVisitor implem
         decrIndentation();
         mainTask.getVariables().accept(this);
         nlIndent();
-        if ( this.usedHardwareBean.isSensorUsed(SC.TIMER) ) {
+        if ( this.getBean(UsedHardwareBean.class).isSensorUsed(SC.TIMER) ) {
             this.sb.append("unsigned long __time = millis();");
             nlIndent();
         }

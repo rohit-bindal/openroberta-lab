@@ -1,8 +1,9 @@
 package de.fhg.iais.roberta.visitor.codegen;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean;
+import de.fhg.iais.roberta.bean.OraBean;
 import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.components.ConfigurationAst;
 import de.fhg.iais.roberta.mode.general.IndexLocation;
@@ -39,17 +40,13 @@ public abstract class AbstractCommonArduinoCppVisitor extends AbstractCppVisitor
 
     protected ConfigurationAst configuration;
 
-    protected AbstractCommonArduinoCppVisitor(
-        UsedHardwareBean usedHardwareBean,
-        CodeGeneratorSetupBean codeGeneratorSetupBean,
-        ConfigurationAst configuration,
-        ArrayList<ArrayList<Phrase<Void>>> programPhrases) {
-        super(usedHardwareBean, codeGeneratorSetupBean, programPhrases);
+    protected AbstractCommonArduinoCppVisitor(List<ArrayList<Phrase<Void>>> programPhrases, ConfigurationAst configuration, OraBean... beans) {
+        super(programPhrases, beans);
         this.configuration = configuration;
     }
 
     protected void generateUsedVars() {
-        for ( VarDeclaration<Void> var : this.usedHardwareBean.getVisitedVars() ) {
+        for ( VarDeclaration<Void> var : this.getBean(UsedHardwareBean.class).getVisitedVars() ) {
             this.sb.append("___" + var.getName());
             this.sb.append(" = ");
             var.getValue().accept(this);

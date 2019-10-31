@@ -18,7 +18,7 @@ import de.fhg.iais.roberta.util.dbc.Assert;
  * Creates the HelperMethodGenerator for use in the code generation visitors.
  * TODO should include more general information like global variables etc.
  */
-public class CodeGeneratorSetupBean {
+public class CodeGeneratorSetupBean implements OraBean {
 
     private HelperMethodGenerator helperMethodGenerator;
     private final Set<Enum<?>> usedMethods = new HashSet<>(); //All needed helper methods as a Set

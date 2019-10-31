@@ -2,11 +2,13 @@ package de.fhg.iais.roberta.visitor.codegen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean;
+import de.fhg.iais.roberta.bean.OraBean;
 import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.components.Category;
 import de.fhg.iais.roberta.components.ConfigurationAst;
@@ -58,13 +60,12 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
     private final String password;
 
     public SenseboxCppVisitor(
-        UsedHardwareBean usedHardwareBean,
-        CodeGeneratorSetupBean codeGeneratorSetupBean,
+        List<ArrayList<Phrase<Void>>> programPhrases,
         ConfigurationAst brickConfiguration,
-        ArrayList<ArrayList<Phrase<Void>>> programPhrases,
         String SSID,
-        String password) {
-        super(usedHardwareBean, codeGeneratorSetupBean, brickConfiguration, programPhrases);
+        String password,
+        OraBean... beans) {
+        super(programPhrases, brickConfiguration, beans);
         this.SSID = SSID;
         this.password = password;
     }
@@ -129,7 +130,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
             this.sb.append("\n#include <Plot.h>");
         }
 
-        if ( this.usedHardwareBean.isListsUsed() ) {
+        if ( this.getBean(UsedHardwareBean.class).isListsUsed() ) {
             this.sb.append("\n#include <stdlib.h>");
             this.sb.append("\n#include <list>");
         }
@@ -579,7 +580,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
         for ( ConfigurationComponent usedConfigurationBlock : this.configuration.getConfigurationComponentsValues() ) {
             switch ( usedConfigurationBlock.getComponentType() ) {
                 case SC.LED:
-                    for ( UsedActor usedActor : this.usedHardwareBean.getUsedActors() ) {
+                    for ( UsedActor usedActor : this.getBean(UsedHardwareBean.class).getUsedActors() ) {
                         if ( usedActor.getType().equals(SC.LED) ) {
                             this.sb.append("pinMode(_led_").append(usedConfigurationBlock.getUserDefinedPortName()).append(", OUTPUT);");
                             nlIndent();
@@ -588,7 +589,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
                     }
                     break;
                 case SC.RGBLED:
-                    for ( UsedActor usedActor : this.usedHardwareBean.getUsedActors() ) {
+                    for ( UsedActor usedActor : this.getBean(UsedHardwareBean.class).getUsedActors() ) {
                         if ( usedActor.getType().equals(SC.RGBLED) ) {
                             this.sb.append("pinMode(_led_red_").append(usedConfigurationBlock.getUserDefinedPortName()).append(", OUTPUT);");
                             this.nlIndent();
@@ -632,7 +633,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
                     this.nlIndent();
                     break;
                 case SC.ACCELEROMETER:
-                    for ( UsedSensor usedSensor : this.usedHardwareBean.getUsedSensors() ) {
+                    for ( UsedSensor usedSensor : this.getBean(UsedHardwareBean.class).getUsedSensors() ) {
                         if ( usedSensor.getType().equals(SC.ACCELEROMETER) ) {
                             this.sb.append("_bmx055_").append(usedConfigurationBlock.getUserDefinedPortName()).append(".beginAcc(0x03);");
                             nlIndent();
@@ -641,7 +642,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
                     }
                     break;
                 case SC.COMPASS:
-                    for ( UsedSensor usedSensor : this.usedHardwareBean.getUsedSensors() ) {
+                    for ( UsedSensor usedSensor : this.getBean(UsedHardwareBean.class).getUsedSensors() ) {
                         if ( usedSensor.getType().equals(SC.COMPASS) ) {
                             bmx55PortName = this.configuration.getConfigurationComponentbyType(SC.ACCELEROMETER).getUserDefinedPortName();
                             this.sb.append("_bmx055_").append(bmx55PortName).append(".beginMagn();");
@@ -651,7 +652,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
                     }
                     break;
                 case SC.GYRO:
-                    for ( UsedSensor usedSensor : this.usedHardwareBean.getUsedSensors() ) {
+                    for ( UsedSensor usedSensor : this.getBean(UsedHardwareBean.class).getUsedSensors() ) {
                         if ( usedSensor.getType().equals(SC.GYRO) ) {
                             bmx55PortName = this.configuration.getConfigurationComponentbyType(SC.ACCELEROMETER).getUserDefinedPortName();
                             this.sb.append("_bmx055_").append(bmx55PortName).append(".beginGyro();");
@@ -685,7 +686,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
                     nlIndent();
                     this.sb.append("_display_").append(usedConfigurationBlock.getUserDefinedPortName()).append(".clearDisplay();");
                     nlIndent();
-                    for ( UsedActor usedActor : this.usedHardwareBean.getUsedActors() ) {
+                    for ( UsedActor usedActor : this.getBean(UsedHardwareBean.class).getUsedActors() ) {
                         if ( usedActor.getType().equals(SC.SENSEBOX_PLOTTING) ) {
                             this.sb
                                 .append("_plot_")
@@ -794,7 +795,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
             String blockName = cc.getUserDefinedPortName();
             switch ( cc.getComponentType() ) {
                 case SC.LED:
-                    for ( UsedActor usedActor : this.usedHardwareBean.getUsedActors() ) {
+                    for ( UsedActor usedActor : this.getBean(UsedHardwareBean.class).getUsedActors() ) {
                         if ( usedActor.getType().equals(SC.LED) ) {
                             this.sb.append("int _led_").append(blockName).append(" = ").append(cc.getProperty("INPUT")).append(";");
                             nlIndent();
@@ -803,7 +804,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
                     }
                     break;
                 case SC.RGBLED:
-                    for ( UsedActor usedActor : this.usedHardwareBean.getUsedActors() ) {
+                    for ( UsedActor usedActor : this.getBean(UsedHardwareBean.class).getUsedActors() ) {
                         if ( usedActor.getType().equals(SC.RGBLED) ) {
                             this.sb.append("int _led_red_").append(blockName).append(" = ").append(cc.getProperty("RED")).append(";");
                             this.nlIndent();
@@ -877,7 +878,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
                     }
                     break;
                 case SC.SENSEBOX:
-                    for ( UsedActor usedActor : this.usedHardwareBean.getUsedActors() ) {
+                    for ( UsedActor usedActor : this.getBean(UsedHardwareBean.class).getUsedActors() ) {
                         if ( usedActor.getType().equals(SC.SEND_DATA) ) {
                             Set<Entry<String, String>> componentEntrySet = cc.getComponentProperties().entrySet();
                             int maxNumberOfPairs = componentEntrySet.size() / 2;
@@ -914,7 +915,7 @@ public class SenseboxCppVisitor extends AbstractCommonArduinoCppVisitor implemen
                     nlIndent();
                     break;
                 case SC.ACCELEROMETER:
-                    for ( UsedSensor usedSensor : this.usedHardwareBean.getUsedSensors() ) {
+                    for ( UsedSensor usedSensor : this.getBean(UsedHardwareBean.class).getUsedSensors() ) {
                         if ( usedSensor.getType().equals(SC.COMPASS)
                             || usedSensor.getType().equals(SC.ACCELEROMETER)
                             || usedSensor.getType().equals(SC.GYRO) ) {

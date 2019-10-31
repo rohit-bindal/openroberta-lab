@@ -2,6 +2,7 @@ package de.fhg.iais.roberta.visitor.lang.codegen;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -10,8 +11,10 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.checkerframework.checker.units.qual.K;
 
 import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean;
+import de.fhg.iais.roberta.bean.OraBean;
 import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.components.Category;
 import de.fhg.iais.roberta.inter.mode.general.IMode;
@@ -38,6 +41,7 @@ import de.fhg.iais.roberta.syntax.lang.stmt.StmtList;
 import de.fhg.iais.roberta.syntax.lang.stmt.StmtTextComment;
 import de.fhg.iais.roberta.typecheck.BlocklyType;
 import de.fhg.iais.roberta.util.dbc.Assert;
+import de.fhg.iais.roberta.util.dbc.DbcException;
 import de.fhg.iais.roberta.visitor.lang.ILanguageVisitor;
 
 public abstract class AbstractLanguageVisitor implements ILanguageVisitor<Void> {
@@ -52,25 +56,34 @@ public abstract class AbstractLanguageVisitor implements ILanguageVisitor<Void> 
     private int indentation = 0;
     private StringBuilder indent = new StringBuilder();
 
-    protected UsedHardwareBean usedHardwareBean;
-    protected CodeGeneratorSetupBean codeGeneratorSetupBean;
+    private Map<Class<?>, OraBean> beans = new HashMap<>();
 
     /**
      * initialize the common language code generator visitor.
      */
-    public AbstractLanguageVisitor(
-        UsedHardwareBean usedHardwareBean,
-        CodeGeneratorSetupBean codeGeneratorSetupBean,
-        ArrayList<ArrayList<Phrase<Void>>> programPhrases) {
+    protected AbstractLanguageVisitor(List<ArrayList<Phrase<Void>>> programPhrases, OraBean... beans) {
         Assert.isTrue(!programPhrases.isEmpty());
-        this.usedHardwareBean = usedHardwareBean;
-        this.codeGeneratorSetupBean = codeGeneratorSetupBean;
+        for (OraBean bean : beans) {
+            if (bean != null) {
+                this.beans.put(bean.getClass(), bean);
+            }
+        }
+
         this.programPhrases =
             programPhrases
                 .stream()
                 .flatMap(e -> e.subList(1, e.size()).stream())
                 .filter(p -> p.getProperty().isInTask() == null ? true : p.getProperty().isInTask() && !p.getProperty().isDisabled()) //TODO check if we can avoid null value for inTask
                 .collect(Collectors.toList());
+    }
+
+    protected <T extends OraBean> T getBean(Class<T> beanClass) {
+        try {
+            T t = (T) beans.get(beanClass);
+            return t;
+        } catch ( RuntimeException e ) {
+            throw new DbcException("This bean does not exist!", e);
+        }
     }
 
     public void setStringBuilders(StringBuilder sourceCode, StringBuilder indentation) {

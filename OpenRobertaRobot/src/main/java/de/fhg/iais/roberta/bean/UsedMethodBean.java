@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Container for used methods.
  */
-public class UsedMethodBean {
+public class UsedMethodBean implements OraBean {
     private final Set<Enum<?>> usedMethods = new HashSet<>(); //All needed helper methods as a Set
 
     public Set<Enum<?>> getUsedMethods() {

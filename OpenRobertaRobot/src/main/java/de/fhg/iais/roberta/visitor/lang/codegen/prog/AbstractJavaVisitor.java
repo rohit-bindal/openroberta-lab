@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import org.apache.commons.text.StringEscapeUtils;
 
 import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean;
+import de.fhg.iais.roberta.bean.OraBean;
 import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.syntax.BlockType;
 import de.fhg.iais.roberta.syntax.Phrase;
@@ -73,12 +74,8 @@ public abstract class AbstractJavaVisitor extends AbstractLanguageVisitor {
      * @param programPhrases to generate the code from
      * @param programName name of the program
      */
-    protected AbstractJavaVisitor(
-        UsedHardwareBean usedHardwareBean,
-        CodeGeneratorSetupBean codeGeneratorSetupBean,
-        ArrayList<ArrayList<Phrase<Void>>> programPhrases,
-        String programName) {
-        super(usedHardwareBean, codeGeneratorSetupBean, programPhrases);
+    protected AbstractJavaVisitor(List<ArrayList<Phrase<Void>>> programPhrases, String programName, OraBean... beans) {
+        super(programPhrases, beans);
         this.programName = programName;
     }
 
@@ -252,8 +249,8 @@ public abstract class AbstractJavaVisitor extends AbstractLanguageVisitor {
 
     @Override
     public Void visitStmtFlowCon(StmtFlowCon<Void> stmtFlowCon) {
-        if ( usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) != null ) {
-            if ( usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
+        if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) != null ) {
+            if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
                 this.sb.append("if (true) " + stmtFlowCon.getFlow().toString().toLowerCase() + " loop" + this.currenLoop.getLast() + ";");
                 return null;
             }
@@ -349,7 +346,7 @@ public abstract class AbstractJavaVisitor extends AbstractLanguageVisitor {
                 this.sb.append(" % 2 == 1)");
                 break;
             case PRIME:
-                String methodName = this.codeGeneratorSetupBean.getHelperMethodGenerator().getHelperMethodName(FunctionNames.PRIME);
+                String methodName = this.getBean(CodeGeneratorSetupBean.class).getHelperMethodGenerator().getHelperMethodName(FunctionNames.PRIME);
                 this.sb.append(methodName).append("( (int) ");
                 mathNumPropFunct.getParam().get(0).accept(this);
                 this.sb.append(")");
@@ -398,7 +395,7 @@ public abstract class AbstractJavaVisitor extends AbstractLanguageVisitor {
                 this.sb.append(".get(0)"); // TODO remove? implement?
                 break;
             default:
-                this.sb.append(this.codeGeneratorSetupBean.getHelperMethodGenerator().getHelperMethodName(mathOnListFunct.getFunctName())).append("(");
+                this.sb.append(this.getBean(CodeGeneratorSetupBean.class).getHelperMethodGenerator().getHelperMethodName(mathOnListFunct.getFunctName())).append("(");
                 mathOnListFunct.getParam().get(0).accept(this);
                 break;
         }
@@ -706,7 +703,7 @@ public abstract class AbstractJavaVisitor extends AbstractLanguageVisitor {
 
     private void addLabelToLoop() {
         increaseLoopCounter();
-        if ( usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
+        if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
             this.sb.append("loop" + this.currenLoop.getLast() + ":");
             nlIndent();
         }
@@ -715,10 +712,10 @@ public abstract class AbstractJavaVisitor extends AbstractLanguageVisitor {
     @Override
     protected void generateProgramSuffix(boolean withWrapping) {
         if ( withWrapping ) {
-            if ( !this.codeGeneratorSetupBean.getUsedMethods().isEmpty() ) {
+            if ( !this.getBean(CodeGeneratorSetupBean.class).getUsedMethods().isEmpty() ) {
                 incrIndentation();
                 String helperMethodImpls =
-                    this.codeGeneratorSetupBean.getHelperMethodGenerator().getHelperMethodDefinitions(this.codeGeneratorSetupBean.getUsedMethods());
+                    this.getBean(CodeGeneratorSetupBean.class).getHelperMethodGenerator().getHelperMethodDefinitions(this.getBean(CodeGeneratorSetupBean.class).getUsedMethods());
                 Iterator<String> it = Arrays.stream(helperMethodImpls.split("\n")).iterator();
                 while ( it.hasNext() ) {
                     this.sb.append(it.next());

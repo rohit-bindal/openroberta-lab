@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean;
+import de.fhg.iais.roberta.bean.OraBean;
 import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.inter.mode.general.IMode;
 import de.fhg.iais.roberta.mode.general.IndexLocation;
@@ -81,11 +82,8 @@ public abstract class AbstractPythonVisitor extends AbstractLanguageVisitor {
      *
      * @param programPhrases to generate the code from
      */
-    protected AbstractPythonVisitor(
-        UsedHardwareBean usedHardwareBean,
-        CodeGeneratorSetupBean codeGeneratorSetupBean,
-        ArrayList<ArrayList<Phrase<Void>>> programPhrases) {
-        super(usedHardwareBean, codeGeneratorSetupBean, programPhrases);
+    protected AbstractPythonVisitor(List<ArrayList<Phrase<Void>>> programPhrases, OraBean... beans) {
+        super(programPhrases, beans);
     }
 
     @Override
@@ -247,8 +245,8 @@ public abstract class AbstractPythonVisitor extends AbstractLanguageVisitor {
 
     @Override
     public Void visitStmtFlowCon(StmtFlowCon<Void> stmtFlowCon) {
-        if ( usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) != null ) {
-            if ( usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
+        if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) != null ) {
+            if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
                 this.sb.append("raise " + (stmtFlowCon.getFlow() == Flow.BREAK ? "BreakOutOfALoop" : "ContinueLoop"));
                 return null;
             }
@@ -353,7 +351,7 @@ public abstract class AbstractPythonVisitor extends AbstractLanguageVisitor {
                 this.sb.append(" % 2) == 1");
                 break;
             case PRIME:
-                String methodName = this.codeGeneratorSetupBean.getHelperMethodGenerator().getHelperMethodName(FunctionNames.PRIME);
+                String methodName = this.getBean(CodeGeneratorSetupBean.class).getHelperMethodGenerator().getHelperMethodName(FunctionNames.PRIME);
                 this.sb.append(methodName).append("(");
                 mathNumPropFunct.getParam().get(0).accept(this);
                 this.sb.append(")");
@@ -426,12 +424,12 @@ public abstract class AbstractPythonVisitor extends AbstractLanguageVisitor {
                 this.sb.append(")");
                 break;
             case MEDIAN:
-                this.sb.append(this.codeGeneratorSetupBean.getHelperMethodGenerator().getHelperMethodName(FunctionNames.MEDIAN)).append("(");
+                this.sb.append(this.getBean(CodeGeneratorSetupBean.class).getHelperMethodGenerator().getHelperMethodName(FunctionNames.MEDIAN)).append("(");
                 mathOnListFunct.getParam().get(0).accept(this);
                 this.sb.append(")");
                 break;
             case STD_DEV:
-                this.sb.append(this.codeGeneratorSetupBean.getHelperMethodGenerator().getHelperMethodName(FunctionNames.STD_DEV)).append("(");
+                this.sb.append(this.getBean(CodeGeneratorSetupBean.class).getHelperMethodGenerator().getHelperMethodName(FunctionNames.STD_DEV)).append("(");
                 mathOnListFunct.getParam().get(0).accept(this);
                 this.sb.append(")");
                 break;
@@ -764,7 +762,7 @@ public abstract class AbstractPythonVisitor extends AbstractLanguageVisitor {
     }
 
     protected void addPassIfProgramIsEmpty() {
-        if ( this.usedHardwareBean.isProgramEmpty() ) {
+        if ( this.getBean(UsedHardwareBean.class).isProgramEmpty() ) {
             nlIndent();
             this.sb.append("pass");
         }
@@ -815,7 +813,7 @@ public abstract class AbstractPythonVisitor extends AbstractLanguageVisitor {
     protected void appendTry() {
         increaseLoopCounter();
 
-        if ( usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
+        if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
             incrIndentation();
             nlIndent();
             this.sb.append("try:");
@@ -823,7 +821,7 @@ public abstract class AbstractPythonVisitor extends AbstractLanguageVisitor {
     }
 
     protected void appendExceptionHandling() {
-        if ( usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
+        if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
             decrIndentation();
             nlIndent();
             this.sb.append("except BreakOutOfALoop:");
@@ -941,9 +939,9 @@ public abstract class AbstractPythonVisitor extends AbstractLanguageVisitor {
 
     @Override
     protected void generateProgramSuffix(boolean withWrapping) {
-        if ( !this.codeGeneratorSetupBean.getUsedMethods().isEmpty() ) {
+        if ( !this.getBean(CodeGeneratorSetupBean.class).getUsedMethods().isEmpty() ) {
             String helperMethodImpls =
-                this.codeGeneratorSetupBean.getHelperMethodGenerator().getHelperMethodDefinitions(this.codeGeneratorSetupBean.getUsedMethods());
+                this.getBean(CodeGeneratorSetupBean.class).getHelperMethodGenerator().getHelperMethodDefinitions(this.getBean(CodeGeneratorSetupBean.class).getUsedMethods());
             this.sb.append(helperMethodImpls);
         }
 

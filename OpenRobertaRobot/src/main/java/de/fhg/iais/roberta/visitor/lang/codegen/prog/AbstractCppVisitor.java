@@ -2,12 +2,13 @@ package de.fhg.iais.roberta.visitor.lang.codegen.prog;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.commons.text.StringEscapeUtils;
 
-import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean;
+import de.fhg.iais.roberta.bean.OraBean;
 import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.mode.general.IndexLocation;
 import de.fhg.iais.roberta.mode.general.ListElementOperations;
@@ -57,11 +58,8 @@ public abstract class AbstractCppVisitor extends AbstractLanguageVisitor {
     /**
      * initialize the cpp code generator visitor.
      */
-    protected AbstractCppVisitor(
-        UsedHardwareBean usedHardwareBean,
-        CodeGeneratorSetupBean codeGeneratorSetupBean,
-        ArrayList<ArrayList<Phrase<Void>>> programPhrases) {
-        super(usedHardwareBean, codeGeneratorSetupBean, programPhrases);
+    protected AbstractCppVisitor(List<ArrayList<Phrase<Void>>> programPhrases, OraBean... beans) {
+        super(programPhrases, beans);
     }
 
     @Override
@@ -135,8 +133,8 @@ public abstract class AbstractCppVisitor extends AbstractLanguageVisitor {
 
     @Override
     public Void visitStmtFlowCon(StmtFlowCon<Void> stmtFlowCon) {
-        if ( this.usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) != null ) {
-            if ( this.usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
+        if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) != null ) {
+            if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
                 this.sb.append("goto " + stmtFlowCon.getFlow().toString().toLowerCase() + "_loop" + this.currenLoop.getLast() + ";");
                 return null;
             }
@@ -552,7 +550,7 @@ public abstract class AbstractCppVisitor extends AbstractLanguageVisitor {
 
     protected void addContinueLabelToLoop() {
         Integer lastLoop = this.currenLoop.getLast();
-        if ( this.usedHardwareBean.getLoopsLabelContainer().get(lastLoop) ) {
+        if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(lastLoop) ) {
             nlIndent();
             this.sb.append("continue_loop" + this.currenLoop.getLast() + ":");
         }
@@ -560,7 +558,7 @@ public abstract class AbstractCppVisitor extends AbstractLanguageVisitor {
 
     protected void addBreakLabelToLoop(boolean isWaitStmt) {
         if ( !isWaitStmt ) {
-            if ( this.usedHardwareBean.getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
+            if ( this.getBean(UsedHardwareBean.class).getLoopsLabelContainer().get(this.currenLoop.getLast()) ) {
                 nlIndent();
                 this.sb.append("break_loop" + this.currenLoop.getLast() + ":");
                 nlIndent();
@@ -656,7 +654,7 @@ public abstract class AbstractCppVisitor extends AbstractLanguageVisitor {
     }
 
     protected void generateSignaturesOfUserDefinedMethods() {
-        for ( Method<Void> phrase : this.usedHardwareBean.getUserDefinedMethods() ) {
+        for ( Method<Void> phrase : this.getBean(UsedHardwareBean.class).getUserDefinedMethods() ) {
             this.sb.append(getLanguageVarTypeFromBlocklyType(phrase.getReturnType()) + " ");
             this.sb.append(phrase.getMethodName() + "(");
             phrase.getParameters().accept(this);

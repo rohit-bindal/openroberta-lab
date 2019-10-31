@@ -1,8 +1,10 @@
 package de.fhg.iais.roberta.visitor.codegen;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean;
+import de.fhg.iais.roberta.bean.OraBean;
 import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.components.ConfigurationAst;
 import de.fhg.iais.roberta.inter.mode.action.ILanguage;
@@ -41,12 +43,10 @@ public final class RaspberryPiPythonVisitor extends AbstractPythonVisitor implem
      * @param programPhrases to generate the code from
      */
     public RaspberryPiPythonVisitor(
-        UsedHardwareBean usedHardwareBean,
-        CodeGeneratorSetupBean codeGeneratorSetupBean,
+        List<ArrayList<Phrase<Void>>> programPhrases,
         ConfigurationAst brickConfiguration,
-        ArrayList<ArrayList<Phrase<Void>>> programPhrases,
-        ILanguage language) {
-        super(usedHardwareBean, codeGeneratorSetupBean, programPhrases);
+        OraBean... beans) {
+        super(programPhrases, beans);
         this.brickConfiguration = brickConfiguration;
     }
 
