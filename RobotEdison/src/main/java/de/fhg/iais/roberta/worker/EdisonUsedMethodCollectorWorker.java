@@ -10,11 +10,11 @@ import de.fhg.iais.roberta.components.Project;
 import de.fhg.iais.roberta.syntax.Phrase;
 import de.fhg.iais.roberta.visitor.collect.EdisonMethods;
 import de.fhg.iais.roberta.visitor.collect.EdisonUsedMethodCollectorVisitor;
-import de.fhg.iais.roberta.visitor.collect.ICollectorVisitor;
+import de.fhg.iais.roberta.visitor.collect.AbstractLanguageCollectorVisitor;
 
 public class EdisonUsedMethodCollectorWorker extends AbstractUsedMethodCollectorWorker {
     @Override
-    protected ICollectorVisitor getVisitor(UsedMethodBean.Builder builder) {
+    protected AbstractLanguageCollectorVisitor getVisitor(UsedMethodBean.Builder builder) {
         return new EdisonUsedMethodCollectorVisitor(builder);
     }
 
@@ -38,7 +38,7 @@ public class EdisonUsedMethodCollectorWorker extends AbstractUsedMethodCollector
             usedMethodBeanBuilder.addUsedMethod(usedMethod);
         }
 
-        ICollectorVisitor visitor = getVisitor(usedMethodBeanBuilder);
+        AbstractLanguageCollectorVisitor visitor = getVisitor(usedMethodBeanBuilder);
         ArrayList<ArrayList<Phrase<Void>>> tree = project.getProgramAst().getTree();
         for ( ArrayList<Phrase<Void>> phrases : tree ) {
             for ( Phrase<Void> phrase : phrases ) {

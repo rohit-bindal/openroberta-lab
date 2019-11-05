@@ -1,5 +1,6 @@
 package de.fhg.iais.roberta.visitor.collect;
 
+import de.fhg.iais.roberta.bean.LanguageFeatureBean;
 import de.fhg.iais.roberta.syntax.MotionParam;
 import de.fhg.iais.roberta.syntax.MotorDuration;
 import de.fhg.iais.roberta.syntax.action.communication.BluetoothCheckConnectAction;
@@ -80,83 +81,82 @@ import de.fhg.iais.roberta.syntax.sensor.generic.VoltageSensor;
 import de.fhg.iais.roberta.syntax.sensor.mbed.RadioRssiSensor;
 import de.fhg.iais.roberta.visitor.hardware.IMbedVisitor;
 
-/**
- * Collector for the Mbed robots.
- * Adds the blocks missing from the defaults of {@link ICollectorVisitor}.
- * Defines the specific parent implementation to use (the one of the collector) due to unrelated defaults.
- */
-public interface IMbedCollectorVisitor extends ICollectorVisitor, IMbedVisitor<Void> {
+public class MbedLanguageFeatureCollectorVisitor extends AbstractLanguageFeatureCollectorVisitor implements IMbedVisitor<Void> {
+
+    public MbedLanguageFeatureCollectorVisitor(LanguageFeatureBean.Builder builder) {
+        super(builder);
+    }
 
     @Override
-    default Void visitDisplayTextAction(DisplayTextAction<Void> displayTextAction) {
+    public Void visitDisplayTextAction(DisplayTextAction<Void> displayTextAction) {
         displayTextAction.getMsg().accept(this);
         return null;
     }
 
     @Override
-    default Void visitPredefinedImage(PredefinedImage<Void> predefinedImage) {
+    public Void visitPredefinedImage(PredefinedImage<Void> predefinedImage) {
         return null;
     }
 
     @Override
-    default Void visitDisplayImageAction(DisplayImageAction<Void> displayImageAction) {
+    public Void visitDisplayImageAction(DisplayImageAction<Void> displayImageAction) {
         displayImageAction.getValuesToDisplay().accept(this);
         return null;
     }
 
     @Override
-    default Void visitImageShiftFunction(ImageShiftFunction<Void> imageShiftFunction) {
+    public Void visitImageShiftFunction(ImageShiftFunction<Void> imageShiftFunction) {
         imageShiftFunction.getImage().accept(this);
         imageShiftFunction.getPositions().accept(this);
         return null;
     }
 
     @Override
-    default Void visitImageInvertFunction(ImageInvertFunction<Void> imageInvertFunction) {
+    public Void visitImageInvertFunction(ImageInvertFunction<Void> imageInvertFunction) {
         imageInvertFunction.getImage().accept(this);
         return null;
     }
 
     @Override
-    default Void visitImage(Image<Void> image) {
+    public Void visitImage(Image<Void> image) {
         return null;
     }
 
     @Override
-    default Void visitLedOnAction(LedOnAction<Void> ledOnAction) {
+    public Void visitLedOnAction(LedOnAction<Void> ledOnAction) {
         ledOnAction.getLedColor().accept(this);
         return null;
     }
 
     @Override
-    default Void visitRadioSendAction(RadioSendAction<Void> radioSendAction) {
+    public Void visitRadioSendAction(RadioSendAction<Void> radioSendAction) {
         radioSendAction.getMsg().accept(this);
         return null;
     }
 
     @Override
-    default Void visitRadioReceiveAction(RadioReceiveAction<Void> radioReceiveAction) {
+    public Void visitRadioReceiveAction(RadioReceiveAction<Void> radioReceiveAction) {
         return null;
     }
 
     @Override
-    default Void visitPinSetPullAction(PinSetPullAction<Void> pinSetPullAction) {
+    public Void visitPinSetPullAction(PinSetPullAction<Void> pinSetPullAction) {
         return null;
     }
 
     @Override
-    default Void visitDisplaySetBrightnessAction(DisplaySetBrightnessAction<Void> displaySetBrightnessAction) {
+    public Void visitDisplaySetBrightnessAction(DisplaySetBrightnessAction<Void> displaySetBrightnessAction) {
         displaySetBrightnessAction.getBrightness().accept(this);
         return null;
     }
 
     @Override
-    default Void visitDisplayGetBrightnessAction(DisplayGetBrightnessAction<Void> displayGetBrightnessAction) {
+    public Void visitDisplayGetBrightnessAction(DisplayGetBrightnessAction<Void> displayGetBrightnessAction) {
         return null;
     }
 
     @Override
-    default Void visitDisplaySetPixelAction(DisplaySetPixelAction<Void> displaySetPixelAction) {
+    public Void visitDisplaySetPixelAction(DisplaySetPixelAction<Void> displaySetPixelAction) {
         displaySetPixelAction.getBrightness().accept(this);
         displaySetPixelAction.getX().accept(this);
         displaySetPixelAction.getY().accept(this);
@@ -164,31 +164,31 @@ public interface IMbedCollectorVisitor extends ICollectorVisitor, IMbedVisitor<V
     }
 
     @Override
-    default Void visitDisplayGetPixelAction(DisplayGetPixelAction<Void> displayGetPixelAction) {
+    public Void visitDisplayGetPixelAction(DisplayGetPixelAction<Void> displayGetPixelAction) {
         displayGetPixelAction.getX().accept(this);
         displayGetPixelAction.getY().accept(this);
         return null;
     }
 
     @Override
-    default Void visitRadioSetChannelAction(RadioSetChannelAction<Void> radioSetChannelAction) {
+    public Void visitRadioSetChannelAction(RadioSetChannelAction<Void> radioSetChannelAction) {
         radioSetChannelAction.getChannel().accept(this);
         return null;
     }
 
     @Override
-    default Void visitSingleMotorOnAction(SingleMotorOnAction<Void> singleMotorOnAction) {
+    public Void visitSingleMotorOnAction(SingleMotorOnAction<Void> singleMotorOnAction) {
         singleMotorOnAction.getSpeed().accept(this);
         return null;
     }
 
     @Override
-    default Void visitSingleMotorStopAction(SingleMotorStopAction<Void> singleMotorStopAction) {
+    public Void visitSingleMotorStopAction(SingleMotorStopAction<Void> singleMotorStopAction) {
         return null;
     }
 
     @Override
-    default Void visitFourDigitDisplayShowAction(FourDigitDisplayShowAction<Void> fourDigitDisplayShowAction) {
+    public Void visitFourDigitDisplayShowAction(FourDigitDisplayShowAction<Void> fourDigitDisplayShowAction) {
         fourDigitDisplayShowAction.getColon().accept(this);
         fourDigitDisplayShowAction.getPosition().accept(this);
         fourDigitDisplayShowAction.getValue().accept(this);
@@ -196,68 +196,68 @@ public interface IMbedCollectorVisitor extends ICollectorVisitor, IMbedVisitor<V
     }
 
     @Override
-    default Void visitFourDigitDisplayClearAction(FourDigitDisplayClearAction<Void> fourDigitDisplayClearAction) {
+    public Void visitFourDigitDisplayClearAction(FourDigitDisplayClearAction<Void> fourDigitDisplayClearAction) {
         return null;
     }
 
     @Override
-    default Void visitBothMotorsOnAction(BothMotorsOnAction<Void> bothMotorsOnAction) {
+    public Void visitBothMotorsOnAction(BothMotorsOnAction<Void> bothMotorsOnAction) {
         bothMotorsOnAction.getSpeedA().accept(this);
         bothMotorsOnAction.getSpeedB().accept(this);
         return null;
     }
 
     @Override
-    default Void visitBothMotorsStopAction(BothMotorsStopAction<Void> bothMotorsStopAction) {
+    public Void visitBothMotorsStopAction(BothMotorsStopAction<Void> bothMotorsStopAction) {
         return null;
     }
 
     @Override
-    default Void visitRadioRssiSensor(RadioRssiSensor<Void> radioRssiSensor) {
+    public Void visitRadioRssiSensor(RadioRssiSensor<Void> radioRssiSensor) {
         return null;
     }
 
     @Override
-    default Void visitLedBarSetAction(LedBarSetAction<Void> ledBarSetAction) {
+    public Void visitLedBarSetAction(LedBarSetAction<Void> ledBarSetAction) {
         ledBarSetAction.getBrightness().accept(this);
         ledBarSetAction.getX().accept(this);
         return null;
     }
 
     @Override
-    default Void visitSwitchLedMatrixAction(SwitchLedMatrixAction<Void> switchLedMatrixAction) {
+    public Void visitSwitchLedMatrixAction(SwitchLedMatrixAction<Void> switchLedMatrixAction) {
         return null;
     }
 
     @Override
-    default Void visitPinWriteValueAction(PinWriteValueAction<Void> pinWriteValueAction) {
+    public Void visitPinWriteValueAction(PinWriteValueAction<Void> pinWriteValueAction) {
         pinWriteValueAction.getValue().accept(this);
         return null;
     }
 
     @Override
-    default Void visitClearDisplayAction(ClearDisplayAction<Void> clearDisplayAction) {
+    public Void visitClearDisplayAction(ClearDisplayAction<Void> clearDisplayAction) {
         return null;
     }
 
     @Override
-    default Void visitLightAction(LightAction<Void> lightAction) {
+    public Void visitLightAction(LightAction<Void> lightAction) {
         lightAction.getRgbLedColor().accept(this);
         return null;
     }
 
     @Override
-    default Void visitLightStatusAction(LightStatusAction<Void> lightStatusAction) {
+    public Void visitLightStatusAction(LightStatusAction<Void> lightStatusAction) {
         return null;
     }
 
     @Override
-    default Void visitMotorGetPowerAction(MotorGetPowerAction<Void> motorGetPowerAction) {
+    public Void visitMotorGetPowerAction(MotorGetPowerAction<Void> motorGetPowerAction) {
         return null;
     }
 
     @Override
-    default Void visitMotorOnAction(MotorOnAction<Void> motorOnAction) {
+    public Void visitMotorOnAction(MotorOnAction<Void> motorOnAction) {
         Expr<Void> durationValue = motorOnAction.getDurationValue();
         if ( durationValue != null ) { // TODO why is this necessary?
             motorOnAction.getDurationValue().accept(this);
@@ -272,161 +272,161 @@ public interface IMbedCollectorVisitor extends ICollectorVisitor, IMbedVisitor<V
     }
 
     @Override
-    default Void visitMotorSetPowerAction(MotorSetPowerAction<Void> motorSetPowerAction) {
+    public Void visitMotorSetPowerAction(MotorSetPowerAction<Void> motorSetPowerAction) {
         motorSetPowerAction.getPower().accept(this);
         return null;
     }
 
     @Override
-    default Void visitMotorStopAction(MotorStopAction<Void> motorStopAction) {
+    public Void visitMotorStopAction(MotorStopAction<Void> motorStopAction) {
         return null;
     }
 
     @Override
-    default Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
+    public Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
         serialWriteAction.getValue().accept(this);
         return null;
     }
 
     @Override
-    default Void visitToneAction(ToneAction<Void> toneAction) {
+    public Void visitToneAction(ToneAction<Void> toneAction) {
         toneAction.getFrequency().accept(this);
         toneAction.getDuration().accept(this);
         return null;
     }
 
     @Override
-    default Void visitPlayNoteAction(PlayNoteAction<Void> playNoteAction) {
+    public Void visitPlayNoteAction(PlayNoteAction<Void> playNoteAction) {
         return null;
     }
 
     @Override
-    default Void visitKeysSensor(KeysSensor<Void> keysSensor) {
+    public Void visitKeysSensor(KeysSensor<Void> keysSensor) {
         return null;
     }
 
     @Override
-    default Void visitColorSensor(ColorSensor<Void> colorSensor) {
+    public Void visitColorSensor(ColorSensor<Void> colorSensor) {
         return null;
     }
 
     @Override
-    default Void visitLightSensor(LightSensor<Void> lightSensor) {
+    public Void visitLightSensor(LightSensor<Void> lightSensor) {
         return null;
     }
 
     @Override
-    default Void visitSoundSensor(SoundSensor<Void> soundSensor) {
+    public Void visitSoundSensor(SoundSensor<Void> soundSensor) {
         return null;
     }
 
     @Override
-    default Void visitEncoderSensor(EncoderSensor<Void> encoderSensor) {
+    public Void visitEncoderSensor(EncoderSensor<Void> encoderSensor) {
         return null;
     }
 
     @Override
-    default Void visitGyroSensor(GyroSensor<Void> gyroSensor) {
+    public Void visitGyroSensor(GyroSensor<Void> gyroSensor) {
         return null;
     }
 
     @Override
-    default Void visitInfraredSensor(InfraredSensor<Void> infraredSensor) {
+    public Void visitInfraredSensor(InfraredSensor<Void> infraredSensor) {
         return null;
     }
 
     @Override
-    default Void visitTimerSensor(TimerSensor<Void> timerSensor) {
+    public Void visitTimerSensor(TimerSensor<Void> timerSensor) {
         return null;
     }
 
     @Override
-    default Void visitTouchSensor(TouchSensor<Void> touchSensor) {
+    public Void visitTouchSensor(TouchSensor<Void> touchSensor) {
         return null;
     }
 
     @Override
-    default Void visitUltrasonicSensor(UltrasonicSensor<Void> ultrasonicSensor) {
+    public Void visitUltrasonicSensor(UltrasonicSensor<Void> ultrasonicSensor) {
         return null;
     }
 
     @Override
-    default Void visitCompassSensor(CompassSensor<Void> compassSensor) {
+    public Void visitCompassSensor(CompassSensor<Void> compassSensor) {
         return null;
     }
 
     @Override
-    default Void visitTemperatureSensor(TemperatureSensor<Void> temperatureSensor) {
+    public Void visitTemperatureSensor(TemperatureSensor<Void> temperatureSensor) {
         return null;
     }
 
     @Override
-    default Void visitVoltageSensor(VoltageSensor<Void> voltageSensor) {
+    public Void visitVoltageSensor(VoltageSensor<Void> voltageSensor) {
         return null;
     }
 
     @Override
-    default Void visitAccelerometer(AccelerometerSensor<Void> accelerometerSensor) {
+    public Void visitAccelerometer(AccelerometerSensor<Void> accelerometerSensor) {
         return null;
     }
 
     @Override
-    default Void visitPinTouchSensor(PinTouchSensor<Void> pinTouchSensor) {
+    public Void visitPinTouchSensor(PinTouchSensor<Void> pinTouchSensor) {
         return null;
     }
 
     @Override
-    default Void visitGestureSensor(GestureSensor<Void> gestureSensor) {
+    public Void visitGestureSensor(GestureSensor<Void> gestureSensor) {
         return null;
     }
 
     @Override
-    default Void visitPinGetValueSensor(PinGetValueSensor<Void> pinGetValueSensor) {
+    public Void visitPinGetValueSensor(PinGetValueSensor<Void> pinGetValueSensor) {
         return null;
     }
 
     @Override
-    default Void visitGetSampleSensor(GetSampleSensor<Void> sensorGetSample) {
+    public Void visitGetSampleSensor(GetSampleSensor<Void> sensorGetSample) {
         return null;
     }
 
     @Override
-    default Void visitIRSeekerSensor(IRSeekerSensor<Void> irSeekerSensor) {
+    public Void visitIRSeekerSensor(IRSeekerSensor<Void> irSeekerSensor) {
         return null;
     }
 
     @Override
-    default Void visitMoistureSensor(MoistureSensor<Void> moistureSensor) {
+    public Void visitMoistureSensor(MoistureSensor<Void> moistureSensor) {
         return null;
     }
 
     @Override
-    default Void visitHumiditySensor(HumiditySensor<Void> humiditySensor) {
+    public Void visitHumiditySensor(HumiditySensor<Void> humiditySensor) {
         return null;
     }
 
     @Override
-    default Void visitMotionSensor(MotionSensor<Void> motionSensor) {
+    public Void visitMotionSensor(MotionSensor<Void> motionSensor) {
         return null;
     }
 
     @Override
-    default Void visitDropSensor(DropSensor<Void> dropSensor) {
+    public Void visitDropSensor(DropSensor<Void> dropSensor) {
         return null;
     }
 
     @Override
-    default Void visitPulseSensor(PulseSensor<Void> pulseSensor) {
+    public Void visitPulseSensor(PulseSensor<Void> pulseSensor) {
         return null;
     }
 
     @Override
-    default Void visitRfidSensor(RfidSensor<Void> rfidSensor) {
+    public Void visitRfidSensor(RfidSensor<Void> rfidSensor) {
         return null;
     }
 
     @Override
-    default Void visitVemlLightSensor(VemlLightSensor<Void> vemlLightSensor) {
+    public Void visitVemlLightSensor(VemlLightSensor<Void> vemlLightSensor) {
         return null;
     }
 }

@@ -6,13 +6,14 @@ import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.bean.UsedMethodBean;
 import de.fhg.iais.roberta.components.Project;
 import de.fhg.iais.roberta.syntax.Phrase;
+import de.fhg.iais.roberta.visitor.IVisitor;
 import de.fhg.iais.roberta.visitor.collect.EdisonUsedHardwareCollectorVisitor;
 import de.fhg.iais.roberta.visitor.validate.AbstractCollectorVisitor;
 
 public final class EdisonUsedHardwareCollectorWorker extends AbstractUsedHardwareCollectorWorker {
 
     @Override
-    protected AbstractCollectorVisitor getVisitor(UsedHardwareBean.Builder builder, Project project) {
+    protected IVisitor getVisitor(UsedHardwareBean.Builder builder, Project project) {
         return null; // as execute is overridden this is not needed
     }
 

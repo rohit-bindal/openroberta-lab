@@ -13,6 +13,7 @@ import de.fhg.iais.roberta.syntax.Phrase;
 import de.fhg.iais.roberta.syntax.sensor.generic.TemperatureSensor;
 import de.fhg.iais.roberta.util.Util;
 import de.fhg.iais.roberta.util.test.UnitTestHelper;
+import de.fhg.iais.roberta.visitor.IVisitor;
 import de.fhg.iais.roberta.visitor.collect.AbstractUsedHardwareCollectorVisitor;
 import de.fhg.iais.roberta.visitor.validate.AbstractCollectorVisitor;
 import de.fhg.iais.roberta.worker.AbstractUsedHardwareCollectorWorker;
@@ -21,7 +22,7 @@ public class LoopCounterVisitorTest extends AstTest {
 
     private class TestUsedHardwareWorker extends AbstractUsedHardwareCollectorWorker {
         @Override
-        protected AbstractCollectorVisitor getVisitor(Builder builder, Project project) {
+        protected IVisitor getVisitor(Builder builder, Project project) {
             return new TestUsedHardware(builder, project.getProgramAst().getTree());
         }
     }

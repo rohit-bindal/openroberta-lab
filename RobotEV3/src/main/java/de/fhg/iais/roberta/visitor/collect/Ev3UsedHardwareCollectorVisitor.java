@@ -19,7 +19,7 @@ import de.fhg.iais.roberta.visitor.hardware.IEv3Visitor;
  *
  * @author kcvejoski
  */
-public final class Ev3UsedHardwareCollectorVisitor extends AbstractUsedHardwareCollectorVisitor implements IEv3Visitor<Void> {
+public final class Ev3UsedHardwareCollectorVisitor extends NewAbstractUsedHardwareCollectorVisitor implements IEv3Visitor<Void> {
     public Ev3UsedHardwareCollectorVisitor(
         UsedHardwareBean.Builder builder,
         ConfigurationAst brickConfiguration) {

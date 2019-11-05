@@ -199,12 +199,6 @@ public class PythonVisitorTest extends EdisonAstTest {
     }
 
     @Test
-    public void visitLightStatusActionTest() throws Exception {
-        String expectedResult = "Ed.RightLed(Ed.OFF)";
-        UnitTestHelper.checkGeneratedSourceEqualityWithProgramXmlAndSourceAsString(testFactory, expectedResult, "/syntax/actor/light_status_action.xml", false);
-    }
-
-    @Test
     public void visitToneActionTest() throws Exception {
         String expectedResult = "Ed.PlayTone(8000000/300,0)Ed.TimeWait(0,Ed.TIME_MILLISECONDS)";
         UnitTestHelper.checkGeneratedSourceEqualityWithProgramXmlAndSourceAsString(testFactory, expectedResult, "/syntax/actor/tone_action.xml", false);

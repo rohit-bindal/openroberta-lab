@@ -5,13 +5,11 @@ import java.util.Collections;
 import java.util.List;
 
 import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean;
-import de.fhg.iais.roberta.bean.CodeGeneratorSetupBean.Builder;
 import de.fhg.iais.roberta.bean.UsedHardwareBean;
 import de.fhg.iais.roberta.bean.UsedMethodBean;
 import de.fhg.iais.roberta.components.Project;
 import de.fhg.iais.roberta.syntax.Phrase;
-import de.fhg.iais.roberta.visitor.collect.AbstractUsedMethodCollectorVisitor;
-import de.fhg.iais.roberta.visitor.collect.ICollectorVisitor;
+import de.fhg.iais.roberta.visitor.collect.AbstractLanguageCollectorVisitor;
 
 /**
  * Uses the {@link AbstractUsedMethodCollectorVisitor} to visit the current AST and collect all used methods.
@@ -26,7 +24,7 @@ public abstract class AbstractUsedMethodCollectorWorker implements IWorker {
      * @param builder the used hardware bean builder
      * @return the appropriate visitor for the current robot
      */
-    protected abstract ICollectorVisitor getVisitor(UsedMethodBean.Builder builder);
+    protected abstract AbstractLanguageCollectorVisitor getVisitor(UsedMethodBean.Builder builder);
 
     /**
      * Returns additional enums which should be added to the used method collection. Used by subclasses to keep the execute method generic.
@@ -40,7 +38,7 @@ public abstract class AbstractUsedMethodCollectorWorker implements IWorker {
     @Override
     public void execute(Project project) {
         UsedMethodBean.Builder usedMethodBeanBuilder = new UsedMethodBean.Builder();
-        ICollectorVisitor visitor = getVisitor(usedMethodBeanBuilder);
+        AbstractLanguageCollectorVisitor visitor = getVisitor(usedMethodBeanBuilder);
         ArrayList<ArrayList<Phrase<Void>>> tree = project.getProgramAst().getTree();
         for ( ArrayList<Phrase<Void>> phrases : tree ) {
             for ( Phrase<Void> phrase : phrases ) {

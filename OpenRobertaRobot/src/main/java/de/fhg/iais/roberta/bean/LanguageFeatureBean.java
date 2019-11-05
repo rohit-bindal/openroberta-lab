@@ -1,7 +1,6 @@
 package de.fhg.iais.roberta.bean;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -11,17 +10,10 @@ import java.util.Set;
 
 import de.fhg.iais.roberta.components.UsedActor;
 import de.fhg.iais.roberta.components.UsedSensor;
-import de.fhg.iais.roberta.syntax.SC;
 import de.fhg.iais.roberta.syntax.lang.expr.VarDeclaration;
 import de.fhg.iais.roberta.syntax.lang.methods.Method;
 
-/**
- * Container for all used hardware related information, used in for example code generation.
- * Currently used for more than just used hardware, should be split up into multiple separate beans in the future.
- */
-//TODO move unrelated data to specific beans. Refactor fields from Mbed into usedActors/Sensors
-public class UsedHardwareBean implements OraBean {
-
+public class LanguageFeatureBean {
     public List<String> globalVariables = new ArrayList<>();
     public List<String> declaredVariables = new ArrayList<>();
     public List<VarDeclaration<Void>> visitedVars = new ArrayList<>();
@@ -35,7 +27,6 @@ public class UsedHardwareBean implements OraBean {
     private Set<UsedSensor> usedSensors = new LinkedHashSet<>();
     private Set<UsedActor> usedActors = new LinkedHashSet<>();
     private Set<String> usedImages = new HashSet<>();
-    private Map<String, String[][]> usedIDImages = new HashMap<>();
 
     public List<VarDeclaration<Void>> getVisitedVars() {
         return this.visitedVars;
@@ -68,10 +59,6 @@ public class UsedHardwareBean implements OraBean {
     public Set<String> getUsedImages() {
         return this.usedImages;
     }
-    
-    public Map<String, String[][]> getUsedIDImages() {
-        return this.usedIDImages;
-    }
 
     public boolean isSensorUsed(String type) {
         return this.usedSensors.stream().anyMatch(usedSensor -> usedSensor.getType().equals(type));
@@ -86,80 +73,75 @@ public class UsedHardwareBean implements OraBean {
     }
 
     public static class Builder {
-        private final UsedHardwareBean usedHardwareBean = new UsedHardwareBean();
+        private final LanguageFeatureBean LanguageFeatureBean = new LanguageFeatureBean();
 
-        public Builder addGlobalVariable(String globalVariable) {
-            this.usedHardwareBean.globalVariables.add(globalVariable);
+        public LanguageFeatureBean.Builder addGlobalVariable(String globalVariable) {
+            this.LanguageFeatureBean.globalVariables.add(globalVariable);
             return this;
         }
 
-        public Builder addDeclaredVariable(String declaredVariable) {
-            this.usedHardwareBean.declaredVariables.add(declaredVariable);
+        public LanguageFeatureBean.Builder addDeclaredVariable(String declaredVariable) {
+            this.LanguageFeatureBean.declaredVariables.add(declaredVariable);
             return this;
         }
 
-        public Builder addVisitedVariable(VarDeclaration<Void> visitedVariable) {
-            this.usedHardwareBean.visitedVars.add(visitedVariable);
+        public LanguageFeatureBean.Builder addVisitedVariable(VarDeclaration<Void> visitedVariable) {
+            this.LanguageFeatureBean.visitedVars.add(visitedVariable);
             return this;
         }
 
-        public Builder addUserDefinedMethod(Method<Void> userDefinedMethod) {
-            this.usedHardwareBean.userDefinedMethods.add(userDefinedMethod);
+        public LanguageFeatureBean.Builder addUserDefinedMethod(Method<Void> userDefinedMethod) {
+            this.LanguageFeatureBean.userDefinedMethods.add(userDefinedMethod);
             return this;
         }
 
-        public Builder addMarkedVariableAsGlobal(String markedVariableAsGlobal) {
-            this.usedHardwareBean.markedVariablesAsGlobal.add(markedVariableAsGlobal);
+        public LanguageFeatureBean.Builder addMarkedVariableAsGlobal(String markedVariableAsGlobal) {
+            this.LanguageFeatureBean.markedVariablesAsGlobal.add(markedVariableAsGlobal);
             return this;
         }
 
-        public Builder setProgramEmpty(boolean isProgramEmpty) {
-            this.usedHardwareBean.isProgramEmpty = isProgramEmpty;
+        public LanguageFeatureBean.Builder setProgramEmpty(boolean isProgramEmpty) {
+            this.LanguageFeatureBean.isProgramEmpty = isProgramEmpty;
             return this;
         }
 
-        public Builder setListsUsed(boolean isListsUsed) {
-            this.usedHardwareBean.isListsUsed = isListsUsed;
+        public LanguageFeatureBean.Builder setListsUsed(boolean isListsUsed) {
+            this.LanguageFeatureBean.isListsUsed = isListsUsed;
             return this;
         }
 
-        public Builder addUsedSensor(UsedSensor usedSensor) {
-            this.usedHardwareBean.usedSensors.add(usedSensor);
+        public LanguageFeatureBean.Builder addUsedSensor(UsedSensor usedSensor) {
+            this.LanguageFeatureBean.usedSensors.add(usedSensor);
             return this;
         }
 
-        public Builder addUsedActor(UsedActor usedActor) {
-            this.usedHardwareBean.usedActors.add(usedActor);
+        public LanguageFeatureBean.Builder addUsedActor(UsedActor usedActor) {
+            this.LanguageFeatureBean.usedActors.add(usedActor);
             return this;
         }
 
-        public Builder addUsedImage(String usedImage) {
-            this.usedHardwareBean.usedImages.add(usedImage);
-            return this;
-        }
-        
-        public Builder addUsedIDImage(String id, String[][] usedImage) {
-            this.usedHardwareBean.usedIDImages.put(id, usedImage);
+        public LanguageFeatureBean.Builder addUsedImage(String usedImage) {
+            this.LanguageFeatureBean.usedImages.add(usedImage);
             return this;
         }
 
-        public Builder putLoopLabel(int loop, boolean isInWait) {
-            this.usedHardwareBean.loopsLabelContainer.put(loop, isInWait);
+        public LanguageFeatureBean.Builder putLoopLabel(int loop, boolean isInWait) {
+            this.LanguageFeatureBean.loopsLabelContainer.put(loop, isInWait);
             return this;
         }
 
         @Deprecated
         public boolean containsGlobalVariable(String variableName) {
-            return this.usedHardwareBean.globalVariables.contains(variableName);
+            return this.LanguageFeatureBean.globalVariables.contains(variableName);
         }
 
         @Deprecated
         public boolean containsDeclaredVariable(String variableName) {
-            return this.usedHardwareBean.declaredVariables.contains(variableName);
+            return this.LanguageFeatureBean.declaredVariables.contains(variableName);
         }
 
-        public UsedHardwareBean build() {
-            return this.usedHardwareBean;
+        public LanguageFeatureBean build() {
+            return this.LanguageFeatureBean;
         }
     }
 }
