@@ -117,22 +117,7 @@ import de.fhg.iais.roberta.visitor.lang.ILanguageVisitor;
  * TODO use this to split {@link de.fhg.iais.roberta.visitor.validate.AbstractCollectorVisitor} and {@link AbstractUsedHardwareCollectorVisitor} into
  * TODO multiple individual visitors instead of the current one in all solution
  */
-public interface ICollectorVisitor extends ISensorVisitor<Void>, IAllActorsVisitor<Void>, ILanguageVisitor<Void> {
-
-    /**
-     * Collection method which should be run over the program in the collector visitor's constructor.
-     * Should effectively be final.
-     *
-     * @param phrasesSet the phrases of the program
-     */
-    default void collect(List<ArrayList<Phrase<Void>>> phrasesSet) {
-        Assert.isTrue(!phrasesSet.isEmpty());
-        for ( List<Phrase<Void>> phrases : phrasesSet ) {
-            for ( Phrase<Void> phrase : phrases ) {
-                phrase.accept(this);
-            }
-        }
-    }
+public interface ICollectorVisitor extends ILanguageVisitor<Void> {
 
     // Language
 
@@ -431,286 +416,286 @@ public interface ICollectorVisitor extends ISensorVisitor<Void>, IAllActorsVisit
         return null;
     }
 
-    // Hardware
-
-    @Override
-    default Void visitBluetoothReceiveAction(BluetoothReceiveAction<Void> bluetoothReceiveAction) {
-        bluetoothReceiveAction.getConnection().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitBluetoothConnectAction(BluetoothConnectAction<Void> bluetoothConnectAction) {
-        bluetoothConnectAction.getAddress().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitBluetoothSendAction(BluetoothSendAction<Void> bluetoothSendAction) {
-        bluetoothSendAction.getMsg().accept(this);
-        bluetoothSendAction.getConnection().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitBluetoothWaitForConnectionAction(BluetoothWaitForConnectionAction<Void> bluetoothWaitForConnection) {
-        return null;
-    }
-
-    @Override
-    default Void visitBluetoothCheckConnectAction(BluetoothCheckConnectAction<Void> bluetoothCheckConnectAction) {
-        bluetoothCheckConnectAction.getConnection().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitDriveAction(DriveAction<Void> driveAction) {
-        driveAction.getParam().getSpeed().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitCurveAction(CurveAction<Void> curveAction) {
-        curveAction.getParamLeft().getSpeed().accept(this);
-        curveAction.getParamRight().getSpeed().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitTurnAction(TurnAction<Void> turnAction) {
-        turnAction.getParam().getSpeed().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitMotorDriveStopAction(MotorDriveStopAction<Void> stopAction) {
-        return null;
-    }
-
-    @Override
-    default Void visitClearDisplayAction(ClearDisplayAction<Void> clearDisplayAction) {
-        return null;
-    }
-
-    @Override
-    default Void visitShowTextAction(ShowTextAction<Void> showTextAction) {
-        showTextAction.getMsg().accept(this);
-        showTextAction.getX().accept(this);
-        showTextAction.getY().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitLightAction(LightAction<Void> lightAction) {
-        lightAction.getRgbLedColor().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitLightStatusAction(LightStatusAction<Void> lightStatusAction) {
-        return null;
-    }
-
-    @Override
-    default Void visitMotorGetPowerAction(MotorGetPowerAction<Void> motorGetPowerAction) {
-        return null;
-    }
-
-    @Override
-    default Void visitMotorOnAction(MotorOnAction<Void> motorOnAction) {
-        Expr<Void> durationValue = motorOnAction.getDurationValue();
-        if ( durationValue != null ) { // TODO why is this necessary?
-            motorOnAction.getDurationValue().accept(this);
-        }
-        MotionParam<Void> param = motorOnAction.getParam();
-        MotorDuration<Void> duration = param.getDuration();
-        if ( duration != null ) { // TODO why is this necessary?
-            duration.getValue().accept(this);
-        }
-        param.getSpeed().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitMotorSetPowerAction(MotorSetPowerAction<Void> motorSetPowerAction) {
-        motorSetPowerAction.getPower().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitMotorStopAction(MotorStopAction<Void> motorStopAction) {
-        return null;
-    }
-
-    @Override
-    default Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
-        serialWriteAction.getValue().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitToneAction(ToneAction<Void> toneAction) {
-        toneAction.getFrequency().accept(this);
-        toneAction.getDuration().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitPlayNoteAction(PlayNoteAction<Void> playNoteAction) {
-        return null;
-    }
-
-    @Override
-    default Void visitVolumeAction(VolumeAction<Void> volumeAction) {
-        volumeAction.getVolume().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitPlayFileAction(PlayFileAction<Void> playFileAction) {
-        return null;
-    }
-
-    @Override
-    default Void visitSetLanguageAction(SetLanguageAction<Void> setLanguageAction) {
-        return null;
-    }
-
-    @Override
-    default Void visitSayTextAction(SayTextAction<Void> sayTextAction) {
-        sayTextAction.getMsg().accept(this);
-        sayTextAction.getPitch().accept(this);
-        sayTextAction.getSpeed().accept(this);
-        return null;
-    }
-
-    @Override
-    default Void visitKeysSensor(KeysSensor<Void> keysSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitColorSensor(ColorSensor<Void> colorSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitLightSensor(LightSensor<Void> lightSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitSoundSensor(SoundSensor<Void> soundSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitEncoderSensor(EncoderSensor<Void> encoderSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitGyroSensor(GyroSensor<Void> gyroSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitInfraredSensor(InfraredSensor<Void> infraredSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitTimerSensor(TimerSensor<Void> timerSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitTouchSensor(TouchSensor<Void> touchSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitUltrasonicSensor(UltrasonicSensor<Void> ultrasonicSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitCompassSensor(CompassSensor<Void> compassSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitTemperatureSensor(TemperatureSensor<Void> temperatureSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitVoltageSensor(VoltageSensor<Void> voltageSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitAccelerometer(AccelerometerSensor<Void> accelerometerSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitPinTouchSensor(PinTouchSensor<Void> pinTouchSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitGestureSensor(GestureSensor<Void> gestureSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitPinGetValueSensor(PinGetValueSensor<Void> pinGetValueSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitGetSampleSensor(GetSampleSensor<Void> sensorGetSample) {
-        return null;
-    }
-
-    @Override
-    default Void visitIRSeekerSensor(IRSeekerSensor<Void> irSeekerSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitMoistureSensor(MoistureSensor<Void> moistureSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitHumiditySensor(HumiditySensor<Void> humiditySensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitMotionSensor(MotionSensor<Void> motionSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitDropSensor(DropSensor<Void> dropSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitPulseSensor(PulseSensor<Void> pulseSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitRfidSensor(RfidSensor<Void> rfidSensor) {
-        return null;
-    }
-
-    @Override
-    default Void visitVemlLightSensor(VemlLightSensor<Void> vemlLightSensor) {
-        return null;
-    }
+//    // Hardware
+//
+//    @Override
+//    default Void visitBluetoothReceiveAction(BluetoothReceiveAction<Void> bluetoothReceiveAction) {
+//        bluetoothReceiveAction.getConnection().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitBluetoothConnectAction(BluetoothConnectAction<Void> bluetoothConnectAction) {
+//        bluetoothConnectAction.getAddress().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitBluetoothSendAction(BluetoothSendAction<Void> bluetoothSendAction) {
+//        bluetoothSendAction.getMsg().accept(this);
+//        bluetoothSendAction.getConnection().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitBluetoothWaitForConnectionAction(BluetoothWaitForConnectionAction<Void> bluetoothWaitForConnection) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitBluetoothCheckConnectAction(BluetoothCheckConnectAction<Void> bluetoothCheckConnectAction) {
+//        bluetoothCheckConnectAction.getConnection().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitDriveAction(DriveAction<Void> driveAction) {
+//        driveAction.getParam().getSpeed().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitCurveAction(CurveAction<Void> curveAction) {
+//        curveAction.getParamLeft().getSpeed().accept(this);
+//        curveAction.getParamRight().getSpeed().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitTurnAction(TurnAction<Void> turnAction) {
+//        turnAction.getParam().getSpeed().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitMotorDriveStopAction(MotorDriveStopAction<Void> stopAction) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitClearDisplayAction(ClearDisplayAction<Void> clearDisplayAction) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitShowTextAction(ShowTextAction<Void> showTextAction) {
+//        showTextAction.getMsg().accept(this);
+//        showTextAction.getX().accept(this);
+//        showTextAction.getY().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitLightAction(LightAction<Void> lightAction) {
+//        lightAction.getRgbLedColor().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitLightStatusAction(LightStatusAction<Void> lightStatusAction) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitMotorGetPowerAction(MotorGetPowerAction<Void> motorGetPowerAction) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitMotorOnAction(MotorOnAction<Void> motorOnAction) {
+//        Expr<Void> durationValue = motorOnAction.getDurationValue();
+//        if ( durationValue != null ) { // TODO why is this necessary?
+//            motorOnAction.getDurationValue().accept(this);
+//        }
+//        MotionParam<Void> param = motorOnAction.getParam();
+//        MotorDuration<Void> duration = param.getDuration();
+//        if ( duration != null ) { // TODO why is this necessary?
+//            duration.getValue().accept(this);
+//        }
+//        param.getSpeed().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitMotorSetPowerAction(MotorSetPowerAction<Void> motorSetPowerAction) {
+//        motorSetPowerAction.getPower().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitMotorStopAction(MotorStopAction<Void> motorStopAction) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitSerialWriteAction(SerialWriteAction<Void> serialWriteAction) {
+//        serialWriteAction.getValue().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitToneAction(ToneAction<Void> toneAction) {
+//        toneAction.getFrequency().accept(this);
+//        toneAction.getDuration().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitPlayNoteAction(PlayNoteAction<Void> playNoteAction) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitVolumeAction(VolumeAction<Void> volumeAction) {
+//        volumeAction.getVolume().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitPlayFileAction(PlayFileAction<Void> playFileAction) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitSetLanguageAction(SetLanguageAction<Void> setLanguageAction) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitSayTextAction(SayTextAction<Void> sayTextAction) {
+//        sayTextAction.getMsg().accept(this);
+//        sayTextAction.getPitch().accept(this);
+//        sayTextAction.getSpeed().accept(this);
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitKeysSensor(KeysSensor<Void> keysSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitColorSensor(ColorSensor<Void> colorSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitLightSensor(LightSensor<Void> lightSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitSoundSensor(SoundSensor<Void> soundSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitEncoderSensor(EncoderSensor<Void> encoderSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitGyroSensor(GyroSensor<Void> gyroSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitInfraredSensor(InfraredSensor<Void> infraredSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitTimerSensor(TimerSensor<Void> timerSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitTouchSensor(TouchSensor<Void> touchSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitUltrasonicSensor(UltrasonicSensor<Void> ultrasonicSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitCompassSensor(CompassSensor<Void> compassSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitTemperatureSensor(TemperatureSensor<Void> temperatureSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitVoltageSensor(VoltageSensor<Void> voltageSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitAccelerometer(AccelerometerSensor<Void> accelerometerSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitPinTouchSensor(PinTouchSensor<Void> pinTouchSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitGestureSensor(GestureSensor<Void> gestureSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitPinGetValueSensor(PinGetValueSensor<Void> pinGetValueSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitGetSampleSensor(GetSampleSensor<Void> sensorGetSample) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitIRSeekerSensor(IRSeekerSensor<Void> irSeekerSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitMoistureSensor(MoistureSensor<Void> moistureSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitHumiditySensor(HumiditySensor<Void> humiditySensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitMotionSensor(MotionSensor<Void> motionSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitDropSensor(DropSensor<Void> dropSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitPulseSensor(PulseSensor<Void> pulseSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitRfidSensor(RfidSensor<Void> rfidSensor) {
+//        return null;
+//    }
+//
+//    @Override
+//    default Void visitVemlLightSensor(VemlLightSensor<Void> vemlLightSensor) {
+//        return null;
+//    }
 }
