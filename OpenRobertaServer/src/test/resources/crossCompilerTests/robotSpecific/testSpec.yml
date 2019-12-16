@@ -32,6 +32,9 @@ robots:
     mega:
         dir: ardu
         suffix: ".ino"
+    botnroll:
+        dir: botnroll
+        suffix: ".ino"
     nao:
         dir: nao
         suffix: ".py"
