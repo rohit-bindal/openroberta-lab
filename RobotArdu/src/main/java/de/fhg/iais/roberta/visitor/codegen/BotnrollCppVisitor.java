@@ -26,6 +26,7 @@ import de.fhg.iais.roberta.syntax.action.sound.ToneAction;
 import de.fhg.iais.roberta.syntax.lang.blocksequence.MainTask;
 import de.fhg.iais.roberta.syntax.lang.expr.Expr;
 import de.fhg.iais.roberta.syntax.lang.expr.SensorExpr;
+import de.fhg.iais.roberta.syntax.lang.expr.StmtExpr;
 import de.fhg.iais.roberta.syntax.sensor.ExternalSensor;
 import de.fhg.iais.roberta.syntax.sensor.generic.ColorSensor;
 import de.fhg.iais.roberta.syntax.sensor.generic.CompassSensor;
@@ -65,7 +66,7 @@ public final class BotnrollCppVisitor extends AbstractCommonArduinoCppVisitor im
         boolean isVar = showTextAction.getMsg().getKind().getName().toString().equals("VAR");
         String mode = null;
         Expr<Void> tt = showTextAction.getMsg();
-        if ( tt.getKind().hasName("SENSOR_EXPR") ) {
+        if ( !(tt instanceof StmtExpr) && tt.getKind().hasName("SENSOR_EXPR") ) {
             ExternalSensor<Void> sens = (ExternalSensor<Void>) ((SensorExpr<Void>) tt).getSens();
             if ( sens.getKind().hasName("COLOR_SENSING") ) {
                 mode = sens.getMode();
