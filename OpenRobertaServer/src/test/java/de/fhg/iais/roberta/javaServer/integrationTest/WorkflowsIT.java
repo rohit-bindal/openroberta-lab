@@ -107,9 +107,9 @@ public class WorkflowsIT {
 
     @Test
     public void testSingleWorkflow() throws Exception {
-        final String robotName = "ev3c4ev3";
+        final String robotName = "uno";
         String workflowName = "showsource";
-        String programFileName = "text_colours_messages_functions";
+        String programFileName = "text_colours_functions";
         String robotDir = robots.getJSONObject(robotName).getString("dir");
         String fullResource = resourceBase + robotDir + "/allBlocks/" + programFileName + ".xml";
         String xmlText = Util.readResourceContent(fullResource);
@@ -128,7 +128,7 @@ public class WorkflowsIT {
         LOG.info("XXXXXXXXXX START of the workflow executions XXXXXXXXXX");
         AtomicBoolean resultAcc = new AtomicBoolean(true);
         try {
-            robots.keySet().stream().filter(s -> s.equals("botnroll")).forEach(robotName -> {
+            robots.keySet().stream().filter(s -> s.equals("unowifirev2")).forEach(robotName -> {
                 String robotDir = robots.getJSONObject(robotName).getString("dir") + "/allBlocks";
                 FileUtils
                     .fileStreamOfResourceDirectory(resourceBase + robotDir)
