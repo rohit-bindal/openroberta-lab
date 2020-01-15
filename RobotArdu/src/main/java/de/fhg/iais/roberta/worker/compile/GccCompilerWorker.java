@@ -27,12 +27,27 @@ public class GccCompilerWorker implements IWorker {
         Util.storeGeneratedProgram(tempDir, project.getSourceCode().toString(), token, programName, "." + project.getSourceCodeFileExtension());
         String scriptName = compilerResourcesDir + "arduino.sh";
         String userProgramDirPath = tempDir + token + "/" + programName;
+
+        String gccBinDir = "/home/avinokurov/.arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/bin";
+        String boardVariant = "standard";
+        String coreIncludes = "/home/avinokurov/.arduino15/packages/arduino/hardware/avr/1.6.23/cores/arduino";
+        String variantsIncludes = "/home/avinokurov/.arduino15/packages/arduino/hardware/avr/1.6.23/variants";
+        String mmcu = "atmega328p";
+        String arduinoVariant = "ARDUINO_UNO";
+        String buildDir = tempDir + token + "/" + programName + "/source";
+
         String[] executableWithParameters =
             {
                 scriptName,
-                compilerResourcesDir,
-                userProgramDirPath + "/source/" + programName,
-                userProgramDirPath + "/target/" + programName
+                gccBinDir,
+                boardVariant,
+                coreIncludes,
+                variantsIncludes,
+                mmcu,
+                arduinoVariant,
+                buildDir,
+                programName,
+                compilerResourcesDir
             };
         Pair<Boolean, String> result = AbstractCompilerWorkflow.runCrossCompiler(executableWithParameters);
         Key resultKey = result.getFirst() ? Key.COMPILERWORKFLOW_SUCCESS : Key.COMPILERWORKFLOW_ERROR_PROGRAM_COMPILE_FAILED;
