@@ -42,8 +42,8 @@ public class GccCompilerWorker implements IWorker {
                 arduinoVariant,
                 buildDir,
                 programName,
-                arduinoDirName,
-                compilerResourcesDir
+                compilerResourcesDir,
+                arduinoDirName
             };
         Pair<Boolean, String> result = AbstractCompilerWorkflow.runCrossCompiler(executableWithParameters);
         Key resultKey = result.getFirst() ? Key.COMPILERWORKFLOW_SUCCESS : Key.COMPILERWORKFLOW_ERROR_PROGRAM_COMPILE_FAILED;
