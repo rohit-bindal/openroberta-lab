@@ -28,11 +28,19 @@ public class GccCompilerWorker implements IWorker {
         String scriptName = compilerResourcesDir + "arduino.sh";
         String userProgramDirPath = tempDir + token + "/" + programName;
 
-        String boardVariant = "standard";
-        String mmcu = "atmega328p";
-        String arduinoVariant = "ARDUINO_AVR_UNO";
+        String boardVariant;
+        String mmcu;
+        if ( project.getRobot().equals("uno") || project.getRobot().equals("nano") ) {
+            boardVariant = "standard";
+            mmcu = "atmega328p";
+        } else {
+            boardVariant = "mega";
+            mmcu = "atmega2560";
+        }
+
+        String arduinoVariant = "ARDUINO_AVR_" + project.getRobot().toUpperCase();
         String buildDir = tempDir + token + "/" + programName + "/source";
-        String arduinoDirName = "uno";
+        String arduinoDirName = project.getRobot();
 
         String[] executableWithParameters =
             {
