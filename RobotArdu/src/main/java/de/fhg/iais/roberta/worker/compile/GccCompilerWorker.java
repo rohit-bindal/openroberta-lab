@@ -25,7 +25,7 @@ public class GccCompilerWorker implements IWorker {
         String programName = project.getProgramName();
         String token = project.getToken();
         Util.storeGeneratedProgram(tempDir, project.getSourceCode().toString(), token, programName, "." + project.getSourceCodeFileExtension());
-        String scriptName = compilerResourcesDir + "arduino.sh";
+        String scriptName = compilerResourcesDir + "arduino-resources/build_project.sh";
         String userProgramDirPath = tempDir + token + "/" + programName;
 
         String boardVariant;
